@@ -31,11 +31,11 @@ f_zipcode = st.sidebar.multiselect('Enter zipcode', data['zipcode'].unique())
 
 st.title('Data Overview')
 
-if(f_zipcode != [] and (f_attribute != [])):
+if(f_zipcode != []) and (f_attribute != []):
     data = data.loc[data['zipcode'].isin(f_zipcode), f_attribute]
-elif(f_zipcode != [] and (f_attribute == [])):
+elif(f_zipcode != []) and (f_attribute == []):
     data = data.loc[data['zipcode'].isin(f_zipcode), :]
-elif(f_zipcode == [] and (f_attribute != [])):
+elif(f_zipcode == []) and (f_attribute != []):
     data = data.loc[:, f_attribute]
 else:
     data = data.copy();
@@ -138,3 +138,65 @@ df = df[['date', 'price']].groupby('date').mean().reset_index()
 #plot
 fig = px.line(df, x= 'date', y='price')
 st.plotly_chart(fig, use_container_width=True)
+
+#Histograma
+st.header('Price Distribution')
+st.sidebar.subheader('Select Max Price')
+
+#filter
+min_price = int(data['price'].min())
+max_price = int(data['price'].max())
+avg_price = int(data['price'].mean())
+
+#data filtering
+f_price = st.sidebar.slider('Price', min_price, max_price, avg_price)
+df = data.loc[data['price'] < f_price]
+
+#data plot
+fig = px.histogram(df, x='price', nbins=50)
+st.plotly_chart(fig, use_container_width=True)
+
+#distribution tags
+st.sidebar.title('Attribute Options')
+st.title('House Attribuites')
+
+#filters
+f_bedrooms = st.sidebar.selectbox('Max number of bedrooms', sorted(set(data['bedrooms'].unique())))
+f_bathrooms = st.sidebar.selectbox('Max number of bathrooms', sorted(set(data['bathrooms'].unique())))
+
+c1,c2=st.beta_columns(2)
+#House per bedrooms
+c1.header('Houses per bedrooms')
+df = data[data['bedrooms'] < f_bedrooms]
+fig = px.histogram(df, x='bedrooms', nbins=19)
+c1.plotly_chart(fig, use_container_width=True)
+
+#House per bathrooms
+c2.header('Houses per bathrooms')
+df = data[data['bathrooms'] < f_bathrooms]
+fig = px.histogram(df, x='bathrooms', nbins=19)
+c2.plotly_chart(fig, use_container_width=True)
+
+#filters
+f_floors = st.sidebar.selectbox('Max number of floor', sorted(set(data['floors'].unique())))
+f_waterview = st.sidebar.checkbox('Only Houses With Water View')
+
+c1, c2 = st.beta_columns(2)
+
+#House per floors
+c1.header('Houses per floor')
+df = data[data['floors'] < f_floors]
+fig = px.histogram(df, x='floors', nbins=19)
+c1.plotly_chart(fig, use_container_width=True)
+
+#House per whater view
+c2.header('Houses With Water Front')
+
+if f_waterview:
+    df = data[data['waterfront'] == 1]
+else:
+    df = data.copy()
+
+fig = px.histogram(df, x='waterfront', nbins=19)
+c2.plotly_chart(fig, use_container_width=True)
+
