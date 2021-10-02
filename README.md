@@ -8,4 +8,6 @@
 * Dados Imobiliários de Seattle, com tabelas com filtros, gráficos e histogramas dos dados.
 * Site hospedado pela Heroku: https://analytics-house-datas.herokuapp.com/
 
+---
 
+⭐️ From [DarlanNoetzold](https://github.com/DarlanNoetzold)
